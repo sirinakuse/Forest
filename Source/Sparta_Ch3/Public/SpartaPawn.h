@@ -32,19 +32,31 @@ protected:
 	UCameraComponent* CameraComp;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	//Jump관련,중력
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float JumpVelocity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
+	float GravityStrength;//중력값
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jump")
+	float VerticalVelocity;
+	bool bIsGrounded;
 
 	//Look관련 변수
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look")
 	float MouseSensitivity;
 	float CumulativePitch;
 	float CumulativeYaw;
+	FRotator DisplayRotation;
+	float LerpSpeed;
 
 	//달리기 속도를 만들어주기 위해 새로 변수를 추가한다. 기본속도와 "기본 속도" 대비 몇 배로 빠르게 달릴지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")//둘 다 에디터에서 수정 가능 하도록 만들어준다.
 	float NormalSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeedMultiplier;//몇 배로 빠르게 달릴지
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")//값이 전부 보이지만 수정 불가 블루프린트 역시 보기만 가능
 	float SprintSpeed;//실제 스프린트 속도
 

@@ -16,6 +16,8 @@ protected:
 	USceneComponent* SceneRoot;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* StaticMeshComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* CoverMeshComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovePlatform|Properties")
 	float MoveSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovePlatform|Properties")

@@ -13,6 +13,7 @@ AMovePlatform::AMovePlatform()
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMeshComp->SetupAttachment(SceneRoot);
 
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/ThirdParty/DreamscapeSeries/DreamscapeTower/Meshes/Tower/SM_Tower_Base.SM_Tower_Base'"));
 
 	if (MeshAsset.Succeeded())
@@ -20,6 +21,9 @@ AMovePlatform::AMovePlatform()
 		StaticMeshComp->SetStaticMesh(MeshAsset.Object);
 		SetActorScale3D(FVector(0.4f));
 	}
+
+	CoverMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CoverStaticMesh"));//여러개를 사용 할 때 겹치면 안됨
+	CoverMeshComp->SetupAttachment(SceneRoot);
 }
 
 void AMovePlatform::BeginPlay()
