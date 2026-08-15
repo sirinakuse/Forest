@@ -18,6 +18,7 @@ protected:
 	UStaticMeshComponent* StaticMeshComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 	FVector MeshOffset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 	float RotationSpeed;
 
 	virtual void BeginPlay() override;
