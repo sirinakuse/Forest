@@ -7,6 +7,8 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UCapsuleComponent;
+class AMovePlatform;
+class ARotatePlatform;
 //Enhanced Input에서 액션 값을 받을 때 사용하는 구조체
 struct FInputActionValue;
 
@@ -31,9 +33,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComp;
 
+	AMovePlatform* MovePlatform;
+	ARotatePlatform* RotatePlatform;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	//Debug용
+	bool bDebugPrinted = false;
 
 	//Jump관련,중력
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jump")
@@ -43,6 +51,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jump")
 	float VerticalVelocity;
 	bool bIsGrounded;
+
+	//경사면, Move관련
+	UPROPERTY(EditAnywhere, Category = "Movemnet")
+	float MaxWalkableSlopeAngle;
+	FVector PlayerMove;
 
 	//Look관련 변수
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look")
@@ -59,12 +72,20 @@ protected:
 	float SprintSpeedMultiplier;//몇 배로 빠르게 달릴지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")//값이 전부 보이지만 수정 불가 블루프린트 역시 보기만 가능
 	float SprintSpeed;//실제 스프린트 속도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	float GroundSpeed;
 
 	bool bIsSprinting;//달리기를 온오프로 변경하기 위한 변수
+
+	FVector PreviousLocation;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	//bool bHasMoveInput;//움직이는 입력을 받고 있는가. CharacterMovement에서 하던 작업을 내 코드 이동 로직 기준으로 변경하는 작업을 해야함
 
 	//Enhanced Input에서 액션 값은 FInputActionValue로 전달
 	UFUNCTION()
 	void Move(const FInputActionValue& value);
+	/*UFUNCTION()
+	void StopMove(const FInputActionValue& value);*/
 	UFUNCTION()
 	void StartJump(const FInputActionValue& value);
 	UFUNCTION()

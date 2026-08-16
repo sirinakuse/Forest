@@ -5,14 +5,6 @@ AMovePlatform::AMovePlatform()
 	PrimaryActorTick.bCanEverTick = true;
 	MoveSpeed = 150.0f;
 	MoveDistance = 0.0f;
-	
-
-	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
-	SetRootComponent(SceneRoot);
-
-	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMeshComp->SetupAttachment(SceneRoot);
-
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/ThirdParty/DreamscapeSeries/DreamscapeTower/Meshes/Tower/SM_Tower_Base.SM_Tower_Base'"));
 
@@ -40,14 +32,18 @@ void AMovePlatform::Tick(float DeltaTime)
 
 	FVector Movement = MoveDirection.GetSafeNormal() * MoveSpeed * DeltaTime;
 	//MoveDirection이 가리키는 방향으로, MoveSpeed 속도로, 이번 프레임(DeltaTime) 동안 이동할 거리를 계산
+	//계산한 값을 변수에 넣어줌
+	
 
 	if (bMovingForward)
 	{
 		AddActorWorldOffset(Movement);//엑터에 로테이션 값이 들어가 있으면 방향이 이상해질 수 있기 때문에 월드를 기준으로 바꿨다.
+		PlatformMovement = Movement;//실제로 발판이 이동한 값을 저장해서 외부에서 사용할 값으로 쓸 예정이다.
 	}
 	else
 	{
 		AddActorWorldOffset(-Movement);
+		PlatformMovement = -Movement;
 	}
 
 	if (FVector::Dist(GetActorLocation(), EndLocation) < 5.0f)
@@ -59,5 +55,10 @@ void AMovePlatform::Tick(float DeltaTime)
 		bMovingForward = true;// StartLocation 복귀 → 다시 정방향으로
 	}
 
+}
+
+FVector AMovePlatform::GetPlatformMovement() const//반환형이 FVector이기 때문에 FVector를 써줌
+{
+	return PlatformMovement;//발판 이동값 저장한 것을 리턴
 }
 
