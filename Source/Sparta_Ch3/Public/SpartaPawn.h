@@ -50,7 +50,10 @@ protected:
 	float GravityStrength;//중력값
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jump")
 	float VerticalVelocity;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	bool bIsGrounded;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float GroundCheckDistance;//Jump 애니메이션이 이상하기 때문에 바닥을 검사할 때 발밑을 얼마나 더 검사할지 추가해주는 용도
 
 	//경사면, Move관련
 	UPROPERTY(EditAnywhere, Category = "Movemnet")
@@ -70,8 +73,8 @@ protected:
 	float NormalSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeedMultiplier;//몇 배로 빠르게 달릴지
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")//값이 전부 보이지만 수정 불가 블루프린트 역시 보기만 가능
-	float SprintSpeed;//실제 스프린트 속도
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")//값이 전부 보이지만 수정 불가 블루프린트 역시 보기만 가능
+	//float SprintSpeed;//실제 스프린트 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	float GroundSpeed;
 

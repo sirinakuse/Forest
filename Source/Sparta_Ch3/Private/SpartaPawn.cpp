@@ -35,9 +35,11 @@ ASpartaPawn::ASpartaPawn()
 	//보간 속도(현재 Look함수에서 사용함)
 	MouseSensitivity = 3.0f;
 
-	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
+	NormalSpeed = 300.0f;
+	SprintSpeedMultiplier = 1.5f;
 	bIsSprinting = false;
 	//bHasMoveInput = false;
+	GroundCheckDistance = 5.0;
 
 	JumpVelocity = 600.0f;
 	GravityStrength = 980.f;
@@ -96,6 +98,7 @@ void ASpartaPawn::Tick(float DeltaTime)
 	CollisionParams.bTraceComplex = false;
 	//복잡한 Collision을 사용할 수 있도록 설정한다 = true, 단순한 Collision일 경우 = false
 
+	//Sweep: 이동하다가 어디 부딪혔는지 Ground Check: 지금 발밑에 바닥이 있는지 체크 bIsGrounded: AnimBP의 착지 판정
 	bool bHit = GetWorld()->SweepSingleByChannel(
 		Hit,//충돌 결과
 		CurrentLocation,//Sweep 시작 위치
@@ -152,6 +155,25 @@ void ASpartaPawn::Tick(float DeltaTime)
 		//아무것도 못 찾으면 예정 위치로 실제 이동
 	}
 
+	FVector GroundStart = GetActorLocation();
+	GroundStart.Z -= CapsuleHalfHeight;
+	FVector GroundEnd = GroundStart;
+	GroundEnd.Z -= GroundCheckDistance;
+
+	FHitResult GroundHit;
+
+	bool bGroundHit = GetWorld()->SweepSingleByChannel(
+		GroundHit,
+		GroundStart,
+		GroundEnd,
+		CapsuleComp->GetComponentQuat(),
+		ECC_WorldStatic,
+		CapsuleComp->GetCollisionShape(0),
+		CollisionParams//위에서 만든 검사 조건을 사용
+	);
+
+	bIsGrounded = bGroundHit;
+
 	//FVector ActualMove = CurrentLocation - PreviousLocation;
 	////이번 프레임에 실제로 얼마나 이동했는가.
 	////이전 위치와 지금 위치를 비교해서 실제 이동량을 구함
@@ -162,7 +184,7 @@ void ASpartaPawn::Tick(float DeltaTime)
 
 	PreviousLocation = CurrentLocation;
 	//계산이 끝나면 이전 위치 저장 값을 현재 위치 값으로 다시 바꿔서 저장해줌
-
+	
 }
 
 void ASpartaPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -200,7 +222,7 @@ void ASpartaPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 				//IA_Move 액션 키를 "키를 누르고 있는 동안" Move()를 호출
 				EnhancedInput->BindAction(
 					PlayerController->JumpAction,
-					ETriggerEvent::Triggered,
+					ETriggerEvent::Started,
 					this,
 					&ASpartaPawn::StartJump
 				);
@@ -260,7 +282,7 @@ void ASpartaPawn::Move(const FInputActionValue& value)
 
 	if (bIsSprinting)
 	{
-		CurrentSpeed = SprintSpeed;
+		CurrentSpeed = NormalSpeed * SprintSpeedMultiplier;
 	}
 	else
 	{
@@ -301,6 +323,7 @@ void ASpartaPawn::Move(const FInputActionValue& value)
 		CapsuleComp->GetCollisionShape(0),
 		CollisionParams
 	);//내 실제 CapsuleComponent와 똑같은 캡슐이 움직였을 때 World Static과 부딪히는지 확인하는 것.
+
 	if (!bHit)//부딪히지 않았을 때
 	{
 		SetActorLocation(NextLocation);
@@ -406,6 +429,6 @@ void ASpartaPawn::Look(const FInputActionValue& value)
 
 void ASpartaPawn::SwitchSprint(const FInputActionValue& value)
 {
-
+	bIsSprinting = !bIsSprinting;//on/off 토글
 }
 
